@@ -72,14 +72,19 @@ static ssize_t hello_read(struct file* filp, char __user *buf, size_t count, lof
     struct hello_dev* dev = filp->private_data;
 
     mutex_lock(&dev->mutex);
+    printk(KERN_ALERT "%s count:%lu, fpos:%lld, %ld\n", __func__, count, *f_pos, sizeof(dev->val));
 
-    printk(KERN_ALERT "%s count:%lu\n", __func__, count);
+    if (*f_pos >= sizeof(dev->val))
+        goto out;
 
+    printk(KERN_ALERT "%s count:%lu, val:%d\n", __func__, count, dev->val);
 
     if(copy_to_user(buf, &(dev->val), sizeof(dev->val))) {
         err = -EFAULT;
         goto out;
     }
+
+    *f_pos += sizeof(dev->val);
 
     err = sizeof(dev->val);
 out:

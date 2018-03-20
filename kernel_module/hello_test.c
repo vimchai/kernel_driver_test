@@ -12,10 +12,11 @@ int hello_mmap(struct file *filp, struct vm_area_struct *vma)
 
     printk("in hello_mmap\n");
 
-    printk(KERN_ALERT"in hello_mmap vma startv%lu\n", vma->vm_start);
+    printk(KERN_ALERT"in hello_mmap vma startv: %lx\n", vma->vm_start);
+    printk(KERN_ALERT"in hello_mmap vma endv: %lx\n", vma->vm_end);
     vma->vm_flags |= VM_IO;
 
-    p = kmalloc(PAGE_SIZE, GFP_KERNEL);
+    p = kmalloc(2*PAGE_SIZE, GFP_KERNEL);
     pfn = virt_to_phys((void *)p) >> PAGE_SHIFT;
 
     if(vmsize > PAGE_SIZE)
